@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
     public bool playerMove = false;
     public bool checkGround = true;
     public Transform chkGround;
+    public Transform atkPoint;
+    public float atkRange;
+    public LayerMask enemyLayers;
 
     private Rigidbody rb;
     private Vector3 displacement;
@@ -79,6 +82,13 @@ public class PlayerController : MonoBehaviour
             checkGround = true;
         }else{
             checkGround = false;
+        }
+    }
+
+    public void PlayerAttack(){
+        Collider[] hitColliders =   Physics.OverlapSphere(atkPoint.position, atkRange, enemyLayers);
+        foreach(Collider hitenemy in hitColliders){
+            print("Atacando" + hitenemy.name);
         }
     }
 }

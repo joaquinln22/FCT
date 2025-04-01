@@ -27,7 +27,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        AttackAnim();
     }
 
     void RunAnim(){
@@ -43,6 +43,13 @@ public class NewMonoBehaviourScript : MonoBehaviour
             playerAnim.SetBool("Jump", true);
         }else{
             playerAnim.SetBool("Jump", false);
+        }
+    }
+
+    void AttackAnim(){
+        if(Input.GetButtonDown("Fire1")){
+            playerAnim.SetTrigger("Atk");
+            player.PlayerAttack();
         }
     }
 }
