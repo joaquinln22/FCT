@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
 
         if(Input.GetButton("Jump") && checkGround){
-            rb.velocity = new Vector3(0f, jumpSpeed, 0f);
+            rb.linearVelocity = new Vector3(0f, jumpSpeed, 0f);
             checkGround = false;
         }
 
