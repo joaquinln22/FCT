@@ -1,71 +1,71 @@
-using System.Collections.Generic;
-using System.Collections;
-using UnityEngine.AI;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
     public Transform target;
-    public bool enemyMove;
-    private NavMeshAgent navEnemy;
+    public float chaseRange = 5f;
+    public float attackRange = 1.2f;
 
-    void Awake()
+    private NavMeshAgent agent;
+    private Animator animator;
+    private bool playerInRange;
+
+    void Start()
     {
-        navEnemy = GetComponent<NavMeshAgent>();
-        navEnemy.updateRotation = false; // Evita rotaciones automáticas del agente
-        navEnemy.updateUpAxis = false;   // Previene inclinaciones si las hubiera
+        agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
+        agent.updateRotation = false;
+        agent.updateUpAxis = false;
     }
 
     void Update()
     {
-        if (target != null && navEnemy.isOnNavMesh && enemyMove)
+        if (target == null || !playerInRange || !agent.isOnNavMesh)
         {
-            float distance = Vector3.Distance(transform.position, target.position);
+            animator.SetBool("Run", false);
+            animator.SetBool("Attack", false);
+            return;
+        }
 
-            if (distance > 2.5f)
-            {
-                // Restringimos el movimiento al plano Y-Z
-                Vector3 targetPosition = target.position;
-                targetPosition.x = transform.position.x;
-                navEnemy.destination = targetPosition;
+        float distance = Vector3.Distance(transform.position, target.position);
 
-                // Rotación manual en eje Z (como el jugador)
-                float directionZ = target.position.z - transform.position.z;
-                if (directionZ != 0f)
-                {
-                    Vector3 lookDirection = new Vector3(0f, 0f, Mathf.Sign(directionZ));
-                    transform.forward = lookDirection;
-                }
-            }
+        if (distance > chaseRange)
+        {
+            animator.SetBool("Run", false);
+            animator.SetBool("Attack", false);
+            agent.isStopped = true;
+        }
+        else if (distance > attackRange)
+        {
+            animator.SetBool("Run", true);
+            animator.SetBool("Attack", false);
+            agent.isStopped = false;
+            agent.SetDestination(target.position);
+        }
+        else
+        {
+            animator.SetBool("Run", false);
+            animator.SetBool("Attack", true);
+            agent.isStopped = true;
+            transform.LookAt(new Vector3(target.position.x, transform.position.y, transform.position.z)); // Gira hacia el jugador
         }
     }
 
-    void OnTriggerStay(Collider other)
+    void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Player") && navEnemy.isOnNavMesh){
-            float distance = Vector3.Distance(transform.position, target.position);
-            
-            if(distance >= 2.5f){
-                Vector3 targetPosition = target.position;
-
-                // Bloqueamos la posición X para que siempre se mantenga
-                targetPosition.x = transform.position.x;
-
-                navEnemy.destination = targetPosition;
-                navEnemy.isStopped = false;
-                enemyMove = true;  
-            }else{
-                navEnemy.isStopped = true;
-                enemyMove = false;
-            }
-        }
+        if (other.CompareTag("Player"))
+            playerInRange = true;
     }
 
     void OnTriggerExit(Collider other)
     {
-        if(other.CompareTag("Player") && navEnemy.isOnNavMesh){
-            navEnemy.isStopped = true;
-            enemyMove = false;
+        if (other.CompareTag("Player"))
+        {
+            playerInRange = false;
+            animator.SetBool("Run", false);
+            animator.SetBool("Attack", false);
+            agent.isStopped = true;
         }
     }
 }
