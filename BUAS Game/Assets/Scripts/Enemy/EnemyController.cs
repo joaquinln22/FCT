@@ -5,7 +5,7 @@ public class EnemyController : MonoBehaviour
 {
     public Transform target;
     public float chaseRange = 5f;
-    public float attackRange = 1.2f;
+    public float attackRange = 1.5f;
 
     private NavMeshAgent agent;
     private Animator animator;

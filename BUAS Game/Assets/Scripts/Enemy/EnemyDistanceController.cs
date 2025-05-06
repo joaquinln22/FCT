@@ -5,7 +5,7 @@ public class EnemyDistanceController : MonoBehaviour
 {
     public Transform target;
     public float activationDistance = 5f;  // Distancia de detección
-    public float stopDistance = 1.2f;      // Distancia mínima para atacar
+    public float stopDistance = 2.5f;      // Distancia mínima para atacar
 
     private NavMeshAgent navEnemy;
     private Animator animator;

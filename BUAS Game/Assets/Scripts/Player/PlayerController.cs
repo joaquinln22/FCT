@@ -84,11 +84,20 @@ public class PlayerController : MonoBehaviour
             checkGround = false;
         }
     }
+    
+    public void PlayerAttack()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(atkPoint.position, atkRange, enemyLayers);
 
-    public void PlayerAttack(){
-        Collider[] hitColliders =   Physics.OverlapSphere(atkPoint.position, atkRange, enemyLayers);
-        foreach(Collider hitenemy in hitColliders){
-            print("Atacando" + hitenemy.name);
+        foreach (Collider hitenemy in hitColliders)
+        {
+            EnemyHealth enemy = hitenemy.GetComponent<EnemyHealth>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(10); // o cualquier valor de daño que quieras
+                Debug.Log("⚔️ Dañando a: " + hitenemy.name);
+            }
         }
     }
+
 }
